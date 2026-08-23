@@ -1,84 +1,83 @@
-# DataLens AI – CSV Data Analyzer
+# DataLens
 
-DataLens AI is a web-based data analysis tool built using Python and Flask.
-It allows users to upload CSV or Excel files and instantly explore, analyze, and visualize their data.
+A Flask-based analytics dashboard for exploring uploaded CSV and Excel data through KPIs, charts, filters, statistics, and natural-language tools.
 
-## Features
+## Overview
 
-* Upload CSV or Excel files
-* Automatic data analysis using Pandas
-* Smart KPI detection
-* Charts and visual insights
-* Data filtering
-* Ask questions about the dataset using AI
-* Download filtered data
-* Generate analysis report
+DataLens lets users upload `.csv`, `.xlsx`, or `.xls` files and explore the active dataset in a browser dashboard. It automatically detects numeric, categorical, and date-like fields to generate suitable KPIs, charts, column statistics, data-quality indicators, and quick insights.
+
+When a `GROQ_API_KEY` is configured, Groq is used to generate a short upload summary and as a fallback interpreter for questions and chart requests. The core calculations, filtering, and chart aggregation are performed locally with Pandas against the current uploaded or filtered dataset.
+
+## Key Features
+
+- Upload CSV and Excel files (`.csv`, `.xlsx`, `.xls`) by drag-and-drop or file picker.
+- Automatically detect useful numeric, categorical, status, grouping, and date fields.
+- Generate dataset-aware KPIs such as record count, total/average/minimum/maximum value, status win rate, group counts, and top groups when compatible columns exist.
+- Show automatic insights based on the detected fields and current data.
+- Apply categorical and date-range filters; KPIs, charts, statistics, table data, insights, and Data Quality Score refresh for the filtered dataset.
+- View animated Chart.js visualisations, including bar, line, doughnut, and scatter charts when the dataset supports them.
+- Use the **AI Chart Generator** to describe a bar, line, pie/doughnut, or scatter chart in natural language. It uses a deterministic local parser first and an optional Groq fallback for unsupported requests.
+- Compare categorical values such as `Electronics vs Clothing` or compare compatible numeric fields.
+- Ask dataset questions through **Ask Anything**. Common requests such as counts, missing values, value breakdowns, top/bottom results, aggregates, comparisons, and filtered record previews are calculated from the full active dataset.
+- Review a read-only **Data Quality Score** that reports completeness, blank text cells, columns with missing values, and exact duplicate rows.
+- Browse a searchable, sortable, paginated table preview of up to 300 rows returned by the dashboard.
+- Review per-column numeric statistics: mean, median, minimum, maximum, total, and missing values.
+- Export the current filtered dataset as CSV and export a summary report as PDF or TXT.
+- Download rendered charts as PNG images.
 
 ## Tech Stack
 
-* Python
-* Flask
-* Pandas
-* NumPy
-* HTML
-* CSS
-* JavaScript
+| Area | Technologies |
+| --- | --- |
+| Backend | Python, Flask, Pandas, NumPy |
+| AI/API integration | Groq Chat Completions API via `requests` (optional) |
+| Reports and configuration | FPDF2, python-dotenv |
+| Frontend | HTML, CSS, vanilla JavaScript |
+| Charts | Chart.js 4.4.0 (loaded from CDN) |
+| WSGI server dependency | Gunicorn |
+
+## How It Works
+
+1. Upload a CSV or Excel file.
+2. The Flask backend stores the dataset for the browser session and identifies compatible numeric, categorical, and date fields.
+3. DataLens generates KPIs, charts, insights, a Data Quality Score, a table preview, and column statistics.
+4. Apply category or date filters to refresh the dashboard for the active subset of data.
+5. Use **Ask Anything** for supported dataset questions or describe a chart in the **AI Chart Generator**.
+6. Download the active filtered data, reports, or chart images when needed.
 
 ## Installation
 
-1. Clone the repository
+git clone <repository-url>
+cd csv-analyzer-web
+python -m venv .venv
 
-```
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-```
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
 
-2. Go to the project folder
+# macOS/Linux
+# source .venv/bin/activate
 
-```
-cd YOUR-REPOSITORY
-```
-
-3. Install required packages
-
-```
 pip install -r requirements.txt
-```
-
-4. Run the application
-
-```
 python app.py
-```
 
-5. Open in browser
+## Environment Variables
 
-```
-http://127.0.0.1:5000
-```
+Create a `.env` file in the project root:
 
-## Environment Setup
+```env
+GROQ_API_KEY=your_groq_api_key
+SECRET_KEY=your_flask_session_secret
 
-Create a `.env` file in the root directory:
+Then add a new heading before the folder tree:
 
-```
-GROQ_API_KEY=your_api_key_here
-```
-
+```markdown
 ## Project Structure
 
-```
-project-folder
-│
-├── app.py
-├── requirements.txt
+csv-analyzer-web/
+├── app.py                 # Flask app, analysis logic, API routes, and exports
+├── requirements.txt       # Python dependencies
+├── README.md
 ├── .gitignore
-├── .env
-│
-└── templates
-    └── index.html
-```
-
-## Author
-Asiya
-
-
+├── .env                   # Local environment variables; ignored by Git
+└── templates/
+    └── index.html         # Dashboard UI, styles, and browser-side logic
